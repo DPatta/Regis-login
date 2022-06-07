@@ -1,3 +1,8 @@
-extends layout
-block content
-    
+extends layout/index
+
+block content 
+    .container.py-5
+        .card 
+            .card-body 
+                h1 Hello, #{name}
+                a(href="/logout").btn.btn-danger Logout
