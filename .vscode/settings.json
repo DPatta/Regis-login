@@ -1,0 +1,14 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "arjuna.db.elephantsql.com",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "regis-login",
+            "database": "vzxibjab",
+            "username": "vzxibjab",
+            "password": "2B9TAgNT-BnF-sxKBGe-EXycTPe93IGD"
+        }
+    ]
+}
