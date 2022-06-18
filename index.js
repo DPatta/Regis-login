@@ -2,7 +2,7 @@ const express  = require('express');
 const path = require('path');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
-const conn = require('./db');
+const dbConnection = require('./db');
 const { body, validationResult, Result} = require('express-validator');
 
 const app = express();
@@ -46,7 +46,7 @@ const Error = err =>{
 
 app.get('/', ifNotLoggedIn, (req,res,next) =>{
     
-    conn.execute("SELECT name FROM users WHERE id =?", [req.session.userId])
+    dbConnection.execute("SELECT name FROM users WHERE id =?", [req.session.userId])
     .then(([rows]) => {
         res.render('home', {
         name: rows[0].name
@@ -58,7 +58,7 @@ app.get('/', ifNotLoggedIn, (req,res,next) =>{
 //post data validation
 app.post('/register',ifLoggedIn, [
     body('user_email', 'Invalid Email Address!').isEmail().custom((value) =>{
-        return conn.execute("SELECT email FROM users WHERE email =?", [value])
+        return dbConnection.execute("SELECT email FROM users WHERE email =?", [value])
         .then(([rows])=>{
             if (rows.length > 0){
                 return Promise.reject('This email already in use!');
@@ -76,7 +76,7 @@ app.post('/register',ifLoggedIn, [
 
         if(validation_result.isEmpty()) {
             bcrypt.hash(user_pass, 12).then((hash_pass)=>{
-                conn.execute("INSERT INTO users (name, email, password) VALUES(?, ?, ?)", [user_name, user_email, hash_pass])
+                dbConnection.execute("INSERT INTO users (name, email, password) VALUES(?, ?, ?)", [user_name, user_email, hash_pass])
                 .then(result =>{
                     res.send(`Your account has been created successfuuly, Now you can <a href="/"> Login </a>  `);
 
@@ -99,7 +99,7 @@ app.post('/register',ifLoggedIn, [
 app.post('/', ifLoggedIn, [
     body('user_email').custom((value) => { 
         
-        return  conn.execute("SELECT email FROM users WHERE email = ?", [value])
+        return  dbConnection.execute("SELECT email FROM users WHERE email = ?", [value])
         .then(([rows]) => {
             if (rows.length == 1 ) {
                 return true;
@@ -116,7 +116,7 @@ app.post('/', ifLoggedIn, [
     const {user_pass, user_email} = req.body;
 
     if (validation_result.isEmpty()) {
-        conn.execute("SELECT * FROM users WHERE email = ? ", [user_email])
+        dbConnection.execute("SELECT * FROM users WHERE email = ? ", [user_email])
         .then(([rows])=>{
             bcrypt.compare(user_pass, rows[0].password).then(compare_result => {
                 if (compare_result === true) {
