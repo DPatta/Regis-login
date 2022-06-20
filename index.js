@@ -152,4 +152,4 @@ app.get('/logout', (req,res) =>{
 app.use ('/', (req,res) =>{
     res.status(404).send('<h>404 Page not found!</h>')
 })
-app.listen(3000, ()=> console.log("Server is runnig..."))
+app.listen(process.env.PORT || 3000, ()=> console.log("Server is runnig..."))
